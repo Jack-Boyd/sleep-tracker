@@ -1,5 +1,5 @@
 {
-  "name": "SleepTracker",
+  "name": "sleep-tracker",
   "version": "1.0.0",
   "description": "Sleep Tracker Application",
   "main": "index.js",
