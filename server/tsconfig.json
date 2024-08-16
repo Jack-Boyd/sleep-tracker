@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "CommonJS",
+    "sourceMap": true,
+    "outDir": "./build",
+    "strict": true,
+    "moduleResolution": "node",
+    "baseUrl": "src",
+    "paths": {
+      "*": ["./*"]
+    },
+    "types": ["node", "jest"],
+    "typeRoots": [
+      "node_modules/@types"
+  ],
+  "lib": ["es2018", "esnext.asynciterable"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+  },
+  "exclude": ["node_modules"],
+  "include": ["./src/**/*.ts"]
+}
