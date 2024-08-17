@@ -9,6 +9,7 @@ function Layout() {
           <nav>
             <ul>
               <li><Link to="/">Entries</Link></li>
+              <li><Link to="/create">Add Entry</Link></li>
             </ul>
           </nav>
         </div>

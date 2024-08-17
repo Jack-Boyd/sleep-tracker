@@ -24,8 +24,8 @@ function TrendChart() {
       {isError && <div>{error instanceof Error ? `Error: ${error.message}` : 'Unknown Error occured'}</div>}
       {isSuccess && (
         <>
-          <Link to="/entries">
-            <ArrowLeftIcon />Back
+          <Link to="/">
+            <ArrowLeftIcon className="size-5" />Back
           </Link>
           <ul>
             <li>Name: <span>{name}</span></li>

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router-dom';
 
 function Entries() {
   const {isLoading, isError, isSuccess, data, error} = useQuery({
@@ -27,7 +28,9 @@ function Entries() {
         <tbody>
           {data.map((entry: any) => (
             <tr key={entry.id}>
-              <td>{entry.name}</td>
+              <td>
+                <Link to={`/${entry.name}/${entry.gender}`}>{entry.name}</Link>
+              </td>
               <td>{entry.gender}</td>
               <td>{entry.entryCount}</td>
             </tr>
