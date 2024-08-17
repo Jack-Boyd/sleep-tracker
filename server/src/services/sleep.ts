@@ -1,13 +1,18 @@
 import { z } from 'zod';
 import prisma from '../config/db';
+import { startOfDay, subWeeks } from 'date-fns';
+import { SleepEntry } from '@prisma/client';
 
 const sleepEntrySchema = z.object({
-  name: z.string(),
-  gender: z.string(),
-  sleepTimeDuration: z.number().min(0),
+  name: z.string().min(1),
+  gender: z.string().min(1),
+  sleepTimeDuration: z.number().int().min(0),
+  date: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
 });
 
-export const getSleepEntries = async () => {
+type SleepEntryInput = z.infer<typeof sleepEntrySchema>;
+
+export const getSleepEntries = async (): Promise<Array<{ name: string; gender: string; entryCount: number }>>  => {
   try {
     const groupedSleepEntries = await prisma.sleepEntry.groupBy({
       by: ['name', 'gender'],
@@ -18,16 +23,49 @@ export const getSleepEntries = async () => {
         name: 'asc',        
       },
     });
-    const result = groupedSleepEntries.map(entry => ({
+    return groupedSleepEntries.map(entry => ({
       name: entry.name,
       gender: entry.gender,
       entryCount: entry._count.name,
     }));
-    return result;
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    }
-    throw new Error('Error fetching all sleep entries');
+    throw new Error(error instanceof Error ? error.message : 'Error fetching sleep entries');
+  }
+};
+
+export const getSleepEntriesByUser = async (name: string, gender: string): Promise<SleepEntry[]> => {
+  try {
+    const sleepEntries = await prisma.sleepEntry.findMany({
+      where: {
+        name: name,
+        gender: gender,
+        date: {
+          gte: startOfDay(subWeeks(new Date(), 1))
+        }
+      },
+      orderBy: {
+        date: 'asc',
+      }
+    });
+    return sleepEntries;
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : 'Error fetching sleep entries by name');
+  }
+};
+
+export const createSleepEntry = async (sleepEntry: SleepEntryInput): Promise<SleepEntry> => {  
+  try {
+    const formattedDate = startOfDay(sleepEntry.date);
+    const newSleepEntry = await prisma.sleepEntry.create({
+      data: {
+        name: sleepEntry.name,
+        gender: sleepEntry.gender,
+        sleepTimeDuration: sleepEntry.sleepTimeDuration,
+        date: formattedDate,
+      },
+    });
+    return newSleepEntry;
+  } catch (error) {    
+    throw new Error(error instanceof Error ? error.message : 'Error creating sleep entry');
   }
 };
