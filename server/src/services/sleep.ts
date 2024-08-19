@@ -4,9 +4,9 @@ import { startOfDay, subWeeks } from 'date-fns';
 import { SleepEntry } from '@prisma/client';
 
 const sleepEntrySchema = z.object({
-  name: z.string().min(1),
-  gender: z.string().min(1),
-  sleepTimeDuration: z.number().int().min(0),
+  name: z.string().min(1, 'Name is required'),
+  gender: z.string().min(1, 'Gender is required'),
+  sleepTimeDuration: z.number().min(1, 'Sleep time duration must be greater than 0'),
   date: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
 });
 
@@ -55,6 +55,8 @@ export const getSleepEntriesByUser = async (name: string, gender: string): Promi
 
 export const createSleepEntry = async (sleepEntry: SleepEntryInput): Promise<SleepEntry> => {  
   try {
+    sleepEntrySchema.parse(sleepEntry);
+
     const formattedDate = startOfDay(sleepEntry.date);
     const newSleepEntry = await prisma.sleepEntry.create({
       data: {
