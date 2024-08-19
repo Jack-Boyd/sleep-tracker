@@ -10,7 +10,7 @@ export const sleepEntrySchema = z.object({
     invalid_type_error: 'Sleep duration must be at least 1 hour',
   }).min(1, { message: 'Sleep duration must be at least 1 hour' }),
   date: z.string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format. Use yyyy-mm-dd.')
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format. Use dd/mm/yyyy.')
     .refine(value => {
       const [year, month, day] = value.split('-').map(Number);
       const date = new Date(year, month - 1, day);
